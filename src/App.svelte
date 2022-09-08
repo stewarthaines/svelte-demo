@@ -10,6 +10,10 @@
   const CURRENT_PICKLET = 'current-picklet-filehandle'
 
   onMount(async () => {
+    if (typeof(window.showOpenFilePicker) == 'undefined') {
+      // redirect
+      console.error('should have navigated away to browser.svelte but didn\'t')
+    }
     fileHandle = await get(CURRENT_PICKLET)
     if (fileHandle) {
       console.log(`${fileHandle} loaded from idb`)
