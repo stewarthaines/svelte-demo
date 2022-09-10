@@ -122,13 +122,14 @@ async function verifyPermission(fileHandle, withWrite) {
 </script>
 
 <main>
-  <h1>Epub &amp; Picklets</h1>
+  <h1>SVG &amp; Epub &amp; Picklets</h1>
 
   <!-- <img src="/vite.svg" alt="" width="200px"> -->
 <svg
    bind:this={svg}
-   width="500"
-   viewBox="0 0 270.93333 203.2"
+   width="300"
+   height="300"
+   viewBox="0 0 132.29167 132.29167"
    version="1.1"
    id="svg5"
    inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
@@ -138,12 +139,12 @@ async function verifyPermission(fileHandle, withWrite) {
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <path
-     style="fill:none;fill-opacity:1;stroke:#c60000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 153.46845,98.297515 c 0,0 93.63518,-95.1947901 93.63518,-37.298663 0,57.896118 -93.63518,37.298663 -93.63518,37.298663 z"
+     style="fill:none;fill-opacity:1;stroke:#2b8bd1;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 12.821414,64.884131 c 0,0 93.635176,-95.19479 93.635176,-37.298663 0,57.896118 -93.635176,37.298663 -93.635176,37.298663 z"
      id="curve2"
      inkscape:label="curve2"
      sodipodi:nodetypes="czc">
-    <animate begin="0s" keySplines="0.4, 0, 0.1, 1" keyTimes="0; 1" calcMode="spline" attributeName="d" dur="1s" fill="freeze" to="m 153.46845,98.297515 c 0,0 93.63518,-58.673184 93.63518,-0.777057 0,57.896122 -93.63518,0.777057 -93.63518,0.777057 z" />
+    <animate begin="0s" keySplines="0.4, 0, 0.1, 1" keyTimes="0; 1" calcMode="spline" attributeName="d" dur="1s" fill="freeze" to="m 12.821414,64.884131 c 0,0 93.635176,-58.6731843 93.635176,-0.777057 0,57.896126 -93.635176,0.777057 -93.635176,0.777057 z" />
   </path>
 </svg>
   <p>
