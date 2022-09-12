@@ -5,11 +5,15 @@
 
   let project
   let fileHandle
+  let directoryHandle
   let filename
   let fileData
+  let group
+  let svgDoc
   let assets = []
   let value = 0.01
   const CURRENT_PICKLET = 'current-picklet-filehandle'
+  const CURRENT_DIRECTORY = 'current-directoryhandle'
   let svg
   // let animate
 
@@ -91,13 +95,41 @@
   }
 
   async function openDirectory() {
-    const directoryHandle = await window.showDirectoryPicker();
+    directoryHandle = await window.showDirectoryPicker();
+    assets = []
     for await (const file of getFilesRecursively(directoryHandle, directoryHandle)) {
-      // const projectData = await file.text()
-      // console.log(`${file.name}: ${projectData}`)
-      assets = assets.concat(file)
-      console.log(file)
+      assets = assets.concat({file, error: ''})
     }
+    if (assets.length > 0) {
+      set(CURRENT_DIRECTORY, directoryHandle);
+    }
+  }
+
+  async function refreshDirectory() {
+    directoryHandle = await get(CURRENT_DIRECTORY)
+    await directoryHandle.requestPermission()
+    assets = []
+    for await (const file of getFilesRecursively(directoryHandle, directoryHandle)) {
+      assets = assets.concat({file, error: ''})
+    }
+  }
+
+  async function parseSvg(asset: {file: File, error: string}) {
+    let filename = asset.file.name
+    await refreshDirectory()
+    const parser = new DOMParser()
+    // try to get a filename matching the clicked file...
+    let refreshedAsset = asset
+    assets.forEach((value) => {
+      if (value.file.name == filename) {
+        console.log(`matched ${asset.file.lastModified} on filename: ${filename}`)
+        refreshedAsset = value
+      }
+    })
+    const text = await refreshedAsset.file.text()
+    svgDoc = parser.parseFromString(text, 'image/svg+xml');
+    group = svgDoc.querySelector('g')
+    svg.appendChild(group)
   }
 
 async function verifyPermission(fileHandle, withWrite) {
@@ -159,18 +191,20 @@ async function verifyPermission(fileHandle, withWrite) {
   <button on:click={createProject}>New project</button>
   <button on:click={saveProjectAs}>Save project as</button>
   <button on:click={openDirectory}>Open directory</button>
+  <button on:click={refreshDirectory}>Refresh</button>
 
   <ul>
-  {#each assets as asset}<li>{asset.name}</li>{/each}
+  <!-- svelte-ignore a11y-missing-attribute -->
+  {#each assets as asset}<li><a on:click={() => parseSvg(asset)}>{asset.file.name}</a> {asset.file.lastModified} {asset.error}</li>{/each}
   </ul>
-
-  
 
   <input type="range" min=0.01 max=1 bind:value step=0.01>
   <br/> {value}
 
   <p>
-  This application is public because it is hosted on github pages. If you have stumbled across it and are curious about it feel free get in touch with me. Contact details at <a href="https://github.com/stewarthaines">github</a>.
+  This application is public because it is hosted on github pages.<br>
+  If you have stumbled across it and are curious about it feel free get in touch with me.<br>
+  Contact details at <a href="https://github.com/stewarthaines">github</a>.
   </p>
 
 </main>
