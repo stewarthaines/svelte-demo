@@ -198,7 +198,7 @@ async function verifyPermission(fileHandle, withWrite) {
   {#each assets as asset}<li><a on:click={() => parseSvg(asset)}>{asset.file.name}</a> {asset.file.lastModified} {asset.error}</li>{/each}
   </ul>
 
-  <input type="range" min=0.01 max=1 bind:value step=0.01>
+  <input class="slider" type="range" min=0.01 max=1 bind:value step=0.01>
   <br/> {value}
 
   <p>
@@ -210,4 +210,31 @@ async function verifyPermission(fileHandle, withWrite) {
 </main>
 
 <style>
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+}
+input[type=range] {
+  pointer-events: none;
+  direction: rtl;
+}
+input[type=range]:focus-visible {
+  outline-style: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  -webkit-appearance: initial;
+}
+input[type=range]::-webkit-slider-thumb {
+  pointer-events:auto;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 64px;
+  height: 48px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: red;
+}
 </style>
