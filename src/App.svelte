@@ -2,6 +2,7 @@
   import { get, set } from 'idb-keyval'
   import { onMount } from 'svelte'
   import { newProjectFromTemplate } from './lib/Project'
+  import Tree from './lib/Tree.svelte'
 
   let project
   let fileHandle
@@ -10,8 +11,9 @@
   let fileData
   let group
   let svgDoc
+  let svgText
   let assets = []
-  let value = 0.01
+  let value = 0.001
   const CURRENT_PICKLET = 'current-picklet-filehandle'
   const CURRENT_DIRECTORY = 'current-directoryhandle'
   let svg
@@ -126,10 +128,10 @@
         refreshedAsset = value
       }
     })
-    const text = await refreshedAsset.file.text()
-    svgDoc = parser.parseFromString(text, 'image/svg+xml');
-    group = svgDoc.querySelector('g')
-    svg.appendChild(group)
+    svgText = await refreshedAsset.file.text()
+    svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+    // group = svgDoc.querySelector('g')
+    // svg.appendChild(group)
   }
 
 async function verifyPermission(fileHandle, withWrite) {
@@ -164,26 +166,22 @@ async function verifyPermission(fileHandle, withWrite) {
    viewBox="0 0 132.29167 132.29167"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1 (c4e8f9e, 2021-05-24)"
-   sodipodi:docname="drawing.svg"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <path
-     style="fill:none;fill-opacity:1;stroke:#2b8bd1;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-     d="m 12.821414,64.884131 c 0,0 93.635176,-95.19479 93.635176,-37.298663 0,57.896118 -93.635176,37.298663 -93.635176,37.298663 z"
-     id="curve2"
-     inkscape:label="curve2"
-     sodipodi:nodetypes="czc">
-    <animate begin="0s" keySplines="0.4, 0, 0.1, 1" keyTimes="0; 1" calcMode="spline" attributeName="d" dur="1s" fill="freeze" to="m 12.821414,64.884131 c 0,0 93.635176,-58.6731843 93.635176,-0.777057 0,57.896126 -93.635176,0.777057 -93.635176,0.777057 z" />
-  </path>
-</svg>
+    <path
+      style="fill:none;fill-opacity:1;stroke:#2b8bd1;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+      d="m 12.821414,64.884131 c 0,0 93.635176,-95.19479 93.635176,-37.298663 0,57.896118 -93.635176,37.298663 -93.635176,37.298663 z"
+      id="curve2">
+      <animate begin="0s" keySplines="0.4, 0, 0.1, 1" keyTimes="0; 1" calcMode="spline" attributeName="d" dur="1s" fill="freeze" to="m 12.821414,64.884131 c 0,0 93.635176,-58.6731843 93.635176,-0.777057 0,57.896126 -93.635176,0.777057 -93.635176,0.777057 z" />
+    </path>
+  </svg>
   <p>
   {#if project}Current project: {project.name}{/if}
   {#if filename && !project}<button on:click={reopenProject}>Reopen {filename}</button>{/if}
   </p>
-
+  <div class="tree">
+    {#if svgDoc}<Tree node={svgDoc}/>{/if}
+  </div>
   <p>
   Anything at all.
   </p>
@@ -198,7 +196,7 @@ async function verifyPermission(fileHandle, withWrite) {
   {#each assets as asset}<li><a on:click={() => parseSvg(asset)}>{asset.file.name}</a> {asset.file.lastModified} {asset.error}</li>{/each}
   </ul>
 
-  <input class="slider" type="range" min=0.01 max=1 bind:value step=0.01>
+  <input class="slider" type="range" min=0.001 max=1 bind:value step=0.001>
   <br/> {value}
 
   <p>
@@ -210,16 +208,20 @@ async function verifyPermission(fileHandle, withWrite) {
 </main>
 
 <style>
-input[type="range"] {
+.tree {
+  position: absolute;
+  top: 0;
+  background-color: #ccc;
+  text-align: left;
+}
+input[type=range] {
+  pointer-events: none;
+  direction: rtl;
   -webkit-appearance: none;
   width: 100%;
   height: 48px;
   background: rgba(255, 255, 255, 0.6);
   border-radius: 5px;
-}
-input[type=range] {
-  pointer-events: none;
-  direction: rtl;
 }
 input[type=range]:focus-visible {
   outline-style: none;
