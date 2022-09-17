@@ -3,6 +3,8 @@
   import { onMount } from 'svelte'
   import { newProjectFromTemplate } from './lib/Project'
   import Tree from './lib/Tree.svelte'
+  // import macsvg from './assets/macsvg.svg'
+  import InlineSVG from 'svelte-inline-svg'
 
   let project
   let fileHandle
@@ -17,12 +19,14 @@
   const CURRENT_PICKLET = 'current-picklet-filehandle'
   const CURRENT_DIRECTORY = 'current-directoryhandle'
   let svg
+  let svg_src
+  // console.log(macsvg)
   // let animate
 
   $: svg && svg.setCurrentTime(value)
 
   onMount(async () => {
-    svg.pauseAnimations()
+    // svg.pauseAnimations()
     if (typeof(window.showOpenFilePicker) == 'undefined') {
       // redirect
       console.error('should have navigated away to browser.svelte but didn\'t')
@@ -33,6 +37,19 @@
       filename = fileHandle.name
     }
   })
+
+  function initSvg(_svg) {
+    // svg
+    svg = _svg
+    console.log("initSvg()")
+    console.log(_svg)
+    _svg.pauseAnimations();
+    return _svg
+  }
+
+  function svgLoaded() {
+    console.log("svgLoaded()", this)
+  }
 
   async function reopenProject() {
     const writeable = await verifyPermission(fileHandle, true)
@@ -130,6 +147,8 @@
     })
     svgText = await refreshedAsset.file.text()
     svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+
+    // svg_src = asset.file.name
     // group = svgDoc.querySelector('g')
     // svg.appendChild(group)
   }
@@ -158,8 +177,11 @@ async function verifyPermission(fileHandle, withWrite) {
 <main>
   <h1>SVG &amp; Epub &amp; Picklets</h1>
 
-  <!-- <img src="/vite.svg" alt="" width="200px"> -->
-<svg
+  <!-- <img src="/macsvg.svg" bind:this={svg} alt="" width="300px" on:load={initSvg}> -->
+  <!-- {@html svgText} -->
+  <!-- <object type="image/svg+xml" data="./assets/svelte.svg"></object> -->
+  <InlineSVG src="macsvg.svg" width="200" height="200" transformSrc={initSvg} on:loaded={svgLoaded} />
+<!--svg
    bind:this={svg}
    width="300"
    height="300"
@@ -174,7 +196,7 @@ async function verifyPermission(fileHandle, withWrite) {
       id="curve2">
       <animate begin="0s" keySplines="0.4, 0, 0.1, 1" keyTimes="0; 1" calcMode="spline" attributeName="d" dur="1s" fill="freeze" to="m 12.821414,64.884131 c 0,0 93.635176,-58.6731843 93.635176,-0.777057 0,57.896126 -93.635176,0.777057 -93.635176,0.777057 z" />
     </path>
-  </svg>
+  </svg-->
   <p>
   {#if project}Current project: {project.name}{/if}
   {#if filename && !project}<button on:click={reopenProject}>Reopen {filename}</button>{/if}
